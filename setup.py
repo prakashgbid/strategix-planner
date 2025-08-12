@@ -8,7 +8,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 setup(
     name="smart-planner",
     version="0.1.0",
-    author="OSA Contributors",
+    author="MemCore Contributors",
     author_email="osa@omnimind.ai",
     description="Autonomous task planning and execution system",
     long_description=long_description,

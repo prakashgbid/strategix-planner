@@ -1,7 +1,7 @@
-"""Integration tests for smart_planner"""
+"""Integration tests for memcore"""
 
 import pytest
-from smart_planner import SmartPlanner
+from memcore import SmartPlanner
 
 
 @pytest.mark.integration

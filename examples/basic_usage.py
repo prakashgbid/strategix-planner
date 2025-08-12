@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Basic usage example for smart_planner"""
+"""Basic usage example for memcore"""
 
-from smart_planner import SmartPlanner
+from memcore import SmartPlanner
 
 
 def main():

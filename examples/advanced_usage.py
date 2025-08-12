@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Advanced usage example for smart_planner"""
+"""Advanced usage example for memcore"""
 
 import asyncio
-from smart_planner import SmartPlanner
+from memcore import SmartPlanner
 
 
 async def advanced_example():

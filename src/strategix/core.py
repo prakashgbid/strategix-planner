@@ -1,3 +1,5 @@
+import pendulum
+import orjson
 """Core implementation of smart-planner"""
 
 import asyncio
@@ -63,18 +65,18 @@ class TaskStep:
     def mark_started(self):
         """Mark step as started"""
         self.status = TaskStatus.IN_PROGRESS
-        self.started_at = datetime.now()
+        self.started_at = pendulum.now()
 
     def mark_completed(self, result: Any=None):
         """Mark step as completed"""
         self.status = TaskStatus.COMPLETED
-        self.completed_at = datetime.now()
+        self.completed_at = pendulum.now()
         self.result = result
 
     def mark_failed(self, error: str):
         """Mark step as failed"""
         self.status = TaskStatus.FAILED
-        self.completed_at = datetime.now()
+        self.completed_at = pendulum.now()
         self.error = error
 @dataclass
 class Task:
@@ -147,9 +149,9 @@ class TaskPlanner:
                 llm = self.llm_engine.select_best_llm('reasoning')
                 if llm:
                     chain = LLMChain(llm=llm, prompt=self.planning_prompt)
-                    response = await chain.arun(task_description=task.description, task_type=task.task_type.value, context=json.dumps(task.metadata))
+                    response = await chain.arun(task_description=task.description, task_type=task.task_type.value, context=orjson.dumps(task.metadata).decode())
                     try:
-                        plan = json.loads(response)
+                        plan = orjson.loads(response)
                         if isinstance(plan, list) and plan:
                             return plan
                     except json.JSONDecodeError:
@@ -176,7 +178,7 @@ class TaskPlanner:
     async def execute_task(self, task: Task) -> Dict[str, Any]:
         """Execute a task by running its steps"""
         task.status = TaskStatus.IN_PROGRESS
-        task.started_at = datetime.now()
+        task.started_at = pendulum.now()
         completed_steps = []
         results = {}
         while not task.is_complete():
@@ -199,7 +201,7 @@ class TaskPlanner:
                     step.mark_failed(str(e))
         if task.is_complete():
             task.status = TaskStatus.COMPLETED
-            task.completed_at = datetime.now()
+            task.completed_at = pendulum.now()
         return {'task_id': task.task_id, 'status': task.status.value, 'progress': task.get_progress(), 'results': results, 'duration': (task.completed_at - task.started_at).total_seconds() if task.completed_at else None}
 
     async def _execute_step(self, task: Task, step: TaskStep) -> Any:
@@ -232,7 +234,7 @@ class TaskPlanner:
         """Execute research-related step"""
         if self.llm_engine:
             try:
-                (response, _) = await self.llm_engine.query_with_memory(f'Research task: {step.description}\nContext: {json.dumps(task.metadata)}', 'reasoning')
+                (response, _) = await self.llm_engine.query_with_memory(f'Research task: {step.description}\nContext: {orjson.dumps(task.metadata).decode()}', 'reasoning')
                 return response
             except Exception as e:
                 print(f'Research step failed: {e}')

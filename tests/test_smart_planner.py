@@ -1,7 +1,7 @@
-"""Tests for smart_planner"""
+"""Tests for memcore"""
 
 import pytest
-from smart_planner import SmartPlanner
+from memcore import SmartPlanner
 
 
 class TestSmartPlanner:
