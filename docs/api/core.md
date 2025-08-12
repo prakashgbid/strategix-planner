@@ -1,3 +1,6 @@
 # Core API Reference
 
-::: smart_planner.core
+::: strategix.core
+    options:
+      show_source: true
+      show_bases: true
